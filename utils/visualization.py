@@ -5,7 +5,7 @@ import os
 PLOT_DIRS = 'stuff/results/plots/histograms'
 
 if not os.path.exists(PLOT_DIRS):
-  os.mkdir(PLOT_DIRS)
+  os.makedirs(PLOT_DIRS)
 
 #@title Function: Plot Histograms
 def plot_histograms(dict_arrays = None, bins = 10, title="", filename = None, save_name = "default_hist.svg", save = False):
