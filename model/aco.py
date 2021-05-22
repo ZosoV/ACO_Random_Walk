@@ -1,3 +1,5 @@
+
+
 class AntColonyOptimizer():
   def __init__(self, graph, ants, alpha, beta, p, local_p = None, intensity = None, q_0 = None):
     """
