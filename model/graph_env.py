@@ -8,12 +8,11 @@ import enum
 # the environment later in a grid mode
 class State(enum.Enum):
     free = 0.9
-    obstacle = 0.1
-    target = 0.5
+    wall = 0.
 
 #Class to define the environment
 class PPGraph(nx.Graph):
-  def __init__(self, size, tau_0, filename = None):
+  def __init__(self, size, tau_0 = 0.1, filename = None):
     """Define a graph environment given a size
     and tau_0 (initial pheromone).
     The obstacle are loaded from filename
@@ -66,7 +65,7 @@ class PPGraph(nx.Graph):
                     distance = 1)
 
 
-  #Function to plot the structure of the graph
+  # Function to plot the structure of the graph
   def draw_graph(self, node_color='blue', node_size=25, with_labels=False):
     """
     Draw the graph.
