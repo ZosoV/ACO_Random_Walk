@@ -35,6 +35,9 @@ def get_proximity(graph, current_node, neighbor_node, target_node,
   if neighbor_node == target_node:
     proximity = 1
   else:
+    
+    if dis_neig2target == 0.0:
+        print("Problem with neig2target ditance")
 
     if mode == 'proximity_1':
       proximity = 1/ dis_neig2target
