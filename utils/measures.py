@@ -58,9 +58,7 @@ def normalize_array(array, mode):
   elif mode == 'max-min':
     max = np.amax(array)
     min = np.amin(array)
-    if (max - min) == 0.0:
-      array = np.repeat(0.5,len(array))
-    else:
+    if (max - min) != 0.0:
       array = (array - min) / (max - min)
 
 
