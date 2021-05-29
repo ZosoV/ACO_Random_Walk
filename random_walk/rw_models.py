@@ -97,13 +97,21 @@ class GreedyWalker(Walker):
     self.current_position = new_position
 
 
-class LevyFlightGreedyWalker(ProximityWalker):
-  def __init__(self, graph, q_0 = None, reward_tau = 0.0001, omega = 2, advantage = 3):
+class LevyFlightProximityWalker(ProximityWalker):
+  def __init__(self, graph, q_0 = None,
+               omega = 1, 
+               reward_tau = 0.0001,
+               proximity_mode = 'proximity_1', 
+               distance_type = 'euclidean', 
+               normalization = None):
     # omega clustering exponent
 
     self.omega = omega # [1-3]
 
-    super().__init__(graph, q_0, reward_tau, advantage)
+    super().__init__(graph, q_0, reward_tau, 
+                     proximity_mode, 
+                     distance_type, 
+                     normalization)
 
   def update_step(self):
 
@@ -114,7 +122,8 @@ class LevyFlightGreedyWalker(ProximityWalker):
     # build a list with the possible long range connections
     # here we do not included the neighbors nor the start node
     # or target node
-    pos_connections = [ n for n in np.arange(self.start_node + 1, self.target_node) if n not in neighbors_idx]
+    excluding_idx = neighbors_idx + [self.current_position]
+    pos_connections = [ n for n in np.arange(self.start_node + 1, self.target_node) if n not in excluding_idx]
 
     long_range_node = np.random.choice(pos_connections)
 
@@ -147,7 +156,8 @@ class LevyFlightGreedyWalker(GreedyWalker):
     # build a list with the possible long range connections
     # here we do not included the neighbors nor the start node
     # or target node
-    pos_connections = [ n for n in np.arange(self.start_node + 1, self.target_node) if n not in neighbors_idx]
+    excluding_idx = neighbors_idx + [self.current_position]
+    pos_connections = [ n for n in np.arange(self.start_node + 1, self.target_node) if n not in excluding_idx]
 
     long_range_node = np.random.choice(pos_connections)
 
