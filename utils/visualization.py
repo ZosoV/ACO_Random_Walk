@@ -21,7 +21,7 @@ def plot_histograms(dict_arrays = None, bins = 10, title="", filename = None, sa
 
   inches = 4
   cols = 4
-  rows =  np.ceil(len(dict_arrays) / cols)
+  rows =  int(np.ceil(len(dict_arrays) / cols))
 
   fig, ax = plt.subplots(rows,cols, figsize = (inches*cols,inches*rows))
   
