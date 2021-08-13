@@ -2,6 +2,7 @@
 import numpy as np
 from model.graph_env import State
 from utils.measures import get_proximity
+import logging
 
 class AntColonyOptimizer():
   def __init__(self, graph, ants, alpha, beta, p, local_p = None, intensity = None, q_0 = None):
@@ -81,10 +82,10 @@ class AntColonyOptimizer():
 
       # 2. contribution update
       if (node1, node2) in self.best_path or (node2, node1) in self.best_path:
-        self.graph[node1][node2]['pheromone'] += reward
+        self.graph[node1][node2]['pheromone'] += self.p * reward
 
 class ACOPP(AntColonyOptimizer):
-  def __init__(self, graph, ants, alpha, beta, p, penalty, local_p = None, intensity = None, q_0 = None):
+  def __init__(self, graph, ants, alpha, beta, p, penalty, local_p = None, intensity = None, q_0 = None, proximity = 'prox1'):
     """
     Ant colony optimizer for Path Planning.  
     Traverses a graph and finds the min weight distance 
@@ -99,12 +100,14 @@ class ACOPP(AntColonyOptimizer):
     :param penalty: penalization percent of already visited nodes 
     :param intensity: the amount of pheromones to add per edge (optional)
     :param q_0: probability to choose the best construction step (optional)
+    :param proximity: choose what proximity measure use (optional)
     """    
     self.start_node = 0
     self.penalty = penalty
     self.size = graph.size
     self.target_node = self.size * self.size - 1
     self.list_distances = []
+    self.proximity = proximity
 
     super().__init__(graph, ants, alpha, beta, p, local_p, intensity, q_0)
 
@@ -187,7 +190,7 @@ class ACOPP(AntColonyOptimizer):
         is_stuck = False
         step = 0
         while not get_target and not is_stuck:
-          self.update_state()     
+          self.update_state(mode=self.proximity)     
           step += 1
             
           if steps_die == step: 
@@ -208,7 +211,7 @@ class ACOPP(AntColonyOptimizer):
       # Track the best distance so far
       best_distance = self.get_total_distance(self.best_path)
       if iter % iter_show == 0:
-        print("[INFO] iter: {} best: {} d_mean: {} d_stdv: {} d_sem: {}".format(iter, 
+        logging.info("iter: {} best: {:.2f} d_mean: {:.2f} d_stdv: {:.2f} d_sem: {:.2f}".format(iter, 
                                                               best_distance, 
                                                               np.mean(distance_per_ants),
                                                               np.std(distance_per_ants),

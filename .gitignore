@@ -13,6 +13,7 @@ stuff/data/.ipynb_checkpoints/
 stuff/results/.ipynb_checkpoints/
 stuff/results/maze_generation_transition/.ipynb_checkpoints/
 stuff/results/aco_pp/random_walks/
+stuff/results/aco_pp/
 
 .virtual_documents/
 .ipynb_checkpoints/
