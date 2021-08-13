@@ -1,4 +1,5 @@
 import numpy as np
+from model.graph_env import State
 
 def get_distance(pos1, pos2, distance):
   x1, y1 = pos1

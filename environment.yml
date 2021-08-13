@@ -93,5 +93,6 @@ dependencies:
     - wcwidth==0.2.5
     - webencodings==0.5.1
     - websocket-client==1.0.1
+    - xlrd==1.2.0
 prefix: /home/zosov/anaconda3/envs/aco_rw
 

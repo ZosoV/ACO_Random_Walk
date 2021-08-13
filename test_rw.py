@@ -58,8 +58,8 @@ def testing_levy_greedy(g_size, n_random_walks):
 def testing_levy_proximity(g_size, n_random_walks):
     type_rw = "levy_proximity"
     proximities_options = ['proximity_1', 'proximity_2']
-    distances_options = ['euclidean', 'manhattan']
-    normalization_options = [ 'none', 'l2-norm', 'max-min']
+    distances_options = ['euclidean']
+    normalization_options = [ 'none']
     q_0_options = [0. , 0.3, 0.5, 0.7, 0.9]
     omega_options = [0.5, 1, 2, 3, 4]
     num_rand_walks = int(n_random_walks)
@@ -149,8 +149,8 @@ def testing_greedy(g_size, n_random_walks):
 def testing_proximity(g_size, n_random_walks):
     type_rw = "proximity"
     proximities_options = ['proximity_1', 'proximity_2']
-    distances_options = ['euclidean', 'manhattan']
-    normalization_options = [ 'none', 'l2-norm', 'max-min']
+    distances_options = ['euclidean']
+    normalization_options = [ 'none']
     q_0_options = [0. , 0.3, 0.5, 0.7, 0.9]
 
     num_rand_walks = int(n_random_walks)
