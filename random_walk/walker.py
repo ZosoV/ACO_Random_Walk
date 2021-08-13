@@ -43,7 +43,9 @@ class Walker():
 
         is_complete = self.end_route()
 
-      #print("[INFO] n_rw: {} len_path: {}".format(i, len(walker.current_path) ))
+      print("[INFO] n_rw: [{}/{}] len_path: {}".format(i+1, 
+                                                 int(num_rand_walks),
+                                                 len(self.current_path) ))
       distances_list.append(self.get_distance_path())
 
     return distances_list

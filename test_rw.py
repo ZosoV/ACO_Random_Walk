@@ -195,11 +195,15 @@ def testing_proximity(g_size, n_random_walks):
     file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}.npz")
     np.savez(file_name, **dict2plot)      
 
-n_randwalk_options = [1e5, 1e5, 1e5, 1e5,  1e5, 1e4, 3500, 3500, 25]
-graph_size_options = [ 10,  25,  50,  75,  100, 512, 1024, 2048, 4096] 
+# n_randwalk_options = [1e5, 1e5, 1e5, 1e5,  1e5, 1e4, 3500, 3500, 25]
+# graph_size_options = [ 10,  25,  50,  75,  100, 512, 1024, 2048, 4096] 
 
+n_randwalk_options = [ 1e5, 1e5, 1e5,  1e5, 1e4, 3500, 3500, 25]
+graph_size_options = [ 25, 50,  75,  100, 512, 1024, 2048, 4096] 
+
+#testing_proximity(10, 10)
 for idx, graph_size in enumerate(graph_size_options):
-    testing_proximity(graph_size, n_randwalk_options[idx])
-    # testing_greedy(graph_size, n_randwalk_options[idx])
-    # testing_levy_proximity(graph_size, n_randwalk_options[idx])
-    # testing_levy_greedy(graph_size, n_randwalk_options[idx])
+    #testing_proximity(graph_size, n_randwalk_options[idx])
+    #testing_greedy(graph_size, n_randwalk_options[idx])
+    testing_levy_proximity(graph_size, n_randwalk_options[idx])
+    #testing_levy_greedy(graph_size, n_randwalk_options[idx])
