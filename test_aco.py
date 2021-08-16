@@ -10,7 +10,7 @@ import pandas as pd
 import argparse
 import sys
 import logging
-logging.basicConfig(format='%(asctime)s | line: %(lineno)d | %(levelname)s: %(message)s', level=logging.NOTSET)
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description='Test Ant Colony System algorithm')
 parser.add_argument('--exp_name', default=None, type=str,
@@ -19,12 +19,20 @@ parser.add_argument('--exp_file', default="stuff/experiments/params_experiments.
                     help='the file where is stored the specifications of your experiment')
 args = parser.parse_args()
 
+
+date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
+
+logging.basicConfig(
+    filename=f"stuff/logs/{args.exp_name}_{date}.log",
+    filemode='a',
+    format='%(asctime)s | line: %(lineno)d | %(levelname)s: %(message)s', level=logging.NOTSET)
+
 # File with the experiments specifications
 SEED = 10000
 EXPERIMENT_FILE = args.exp_file
-TOTAL_ITER = 200
+TOTAL_ITER = 100
 ITER_SHOW = 25
-EXECUTIONS_PER_EXPERIMENT = 3
+EXECUTIONS_PER_EXPERIMENT = 30
 
 # Init to a particular seed
 np.random.seed(SEED)
@@ -77,20 +85,10 @@ for index, row in params.iterrows():
         # Execute the optimizer
         history = optimizer.fit(TOTAL_ITER,iter_show = ITER_SHOW)
 
-        file_name = "history_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_{}_exc_{}.npy".format(
-            row["size"],
-            row["ants"], 
-            row["tau_0"],
-            row["alpha"], 
-            row["beta"], 
-            row["p"],
-            row["intensity"],
-            row["local_p"],
-            row["q_0"],
-            row["penalty"],
-            row["proximity"],
-            TOTAL_ITER,
-            execution)
+        file_name = "history_exp_{}_exc_{}_iter_{}.npy".format(
+            str(index).zfill(2),
+            str(execution).zfill(2),
+            TOTAL_ITER)
 
         file_dir = os.path.join(saving_dir,file_name)
 

@@ -85,7 +85,7 @@ class AntColonyOptimizer():
         self.graph[node1][node2]['pheromone'] += self.p * reward
 
 class ACOPP(AntColonyOptimizer):
-  def __init__(self, graph, ants, alpha, beta, p, penalty, local_p = None, intensity = None, q_0 = None, proximity = 'prox1'):
+  def __init__(self, graph, ants, alpha, beta, p, penalty, local_p = None, intensity = None, q_0 = None, proximity = 'proximity_1'):
     """
     Ant colony optimizer for Path Planning.  
     Traverses a graph and finds the min weight distance 
