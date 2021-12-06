@@ -8,7 +8,6 @@ import random_walk.rw_models as rw
 import numpy as np
 import pandas as pd
 import argparse
-import sys
 import logging
 from datetime import datetime
 
@@ -17,6 +16,10 @@ parser.add_argument('--exp_name', default=None, type=str,
                     help='the name of the experiment that you want to execute', required=True)
 parser.add_argument('--exp_file', default="stuff/experiments/params_experiments.xlsx", type=str,
                     help='the file where is stored the specifications of your experiment')
+parser.add_argument('--exp_start', default=None, type=int,
+                    help='the id of the experiment to start')
+parser.add_argument('--exp_end', default=None, type=int,
+                    help='the id of the experiment to end')
 args = parser.parse_args()
 
 
@@ -48,6 +51,9 @@ if not os.path.exists(saving_dir):
 # 
 logging.info("Running experiment: {}".format(args.exp_name))
 logging.info("\n {}".format(params.head()))
+
+if args.exp_start is not None and args.exp_end is not None:
+    params = params.loc[(params.index >= args.exp_start) & (params.index < args.exp_end)]
 
 for index, row in params.iterrows():
     for execution in range(EXECUTIONS_PER_EXPERIMENT):

@@ -9,12 +9,10 @@ notebooks/.ipynb_checkpoints/
 random_walk/__pycache__/
 utils/__pycache__/
 
-stuff/data/.ipynb_checkpoints/
-stuff/results/.ipynb_checkpoints/
-stuff/results/maze_generation_transition/.ipynb_checkpoints/
-stuff/results/aco_pp/random_walks/
-stuff/results/aco_pp/
-stuff/results/plots/
+stuff/data/
+stuff/results/
+stuff/logs/
+stuff/distribution/
 
 .virtual_documents/
 .ipynb_checkpoints/

@@ -5,205 +5,105 @@ from networkx.classes import graph
 import model.graph_env as ge
 import random_walk.rw_models as rw
 import numpy as np
+import pandas as pd
 
-DATA_DIR = "stuff/data/random_maze/"
-SAVING_DIR = "stuff/results/aco_pp/"
-RANDOM_WALK_DIR = SAVING_DIR + "random_walks/"
+import argparse
+from datetime import datetime
+import logging
 
-
-def testing_levy_greedy(g_size, n_random_walks):
-    type_rw = "levy_greedy"
-
-    advantage_options = [2,2.5,3]
-    q_0_options = [0, 0.3, 0.5, 0.7, 0.9]
-    omega_options = [0.5, 1, 2, 3, 4]
-    num_rand_walks = int(n_random_walks)
-
-    # Create the graph
-    graph = ge.PPGraph(size=g_size, tau_0=0.1)
-
-    dir_results = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}")
-    if not os.path.exists(dir_results):
-        os.makedirs(dir_results)
-
-    dict2plot = {}
-
-    for advantage in advantage_options:
-        for q_0 in q_0_options:
-            for omega in omega_options:
-
-                # Create the walker
-                walker = rw.LevyFlightGreedyWalker(graph, 
-                                                q_0 = q_0,
-                                                omega = omega,
-                                                advantage = advantage)
-                
-                # Perform the walk
-                distances_list = walker.walk(num_rand_walks)
-                
-                base_name = "advantage_{}_q0_{}_omega_{}".format(
-                    advantage,
-                    q_0,
-                    omega)
-                
-                dict2plot[base_name] = np.array(distances_list)
-                print("Saving ... {}.npy".format(base_name))
-
-                file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}/{base_name}.npy")
-                np.save(file_name, np.array(distances_list))
-
-    file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}.npz")
-    np.savez(file_name, **dict2plot) 
-
-def testing_levy_proximity(g_size, n_random_walks):
-    type_rw = "levy_proximity"
-    proximities_options = ['proximity_1', 'proximity_2']
-    distances_options = ['euclidean']
-    normalization_options = [ 'none']
-    q_0_options = [0. , 0.3, 0.5, 0.7, 0.9]
-    omega_options = [0.5, 1, 2, 3, 4]
-    num_rand_walks = int(n_random_walks)
-
-    # Create the graph
-    graph = ge.PPGraph(size = g_size, tau_0 = 0.1)
-
-    dir_results = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}")
-    if not os.path.exists(dir_results):
-        os.makedirs(dir_results)
-
-    dict2plot = {}
-    for proximity in proximities_options:
-        for distance in distances_options:
-            for normalization in normalization_options:
-                for q_0 in q_0_options:
-                    for omega in omega_options:
+parser = argparse.ArgumentParser(description='Test Ant Colony System algorithm')
+parser.add_argument('--exp_name', default=None, type=str,
+                    help='the name of the experiment that you want to execute', required=True)
+parser.add_argument('--exp_file', default="stuff/experiments/rw_experiments_1.xlsx", type=str,
+                    help='the file where is stored the specifications of your experiment')
+parser.add_argument('--exp_start', default=None, type=int,
+                    help='the id of the experiment to start')
+parser.add_argument('--exp_end', default=None, type=int,
+                    help='the id of the experiment to end')
+args = parser.parse_args()
 
 
-                        # Create the walker
-                        walker = rw.LevyFlightProximityWalker(graph, 
-                                                q_0 = q_0, 
-                                                reward_tau = 0.0001,
-                                                omega = omega,
-                                                proximity_mode = proximity,
-                                                distance_type = distance,
-                                                normalization = normalization)
+date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
 
-                        # Perform the walk
-                        distances_list = walker.walk(num_rand_walks = num_rand_walks)
-                        
-                        base_name = "{}_{}_{}_{}_omega_{}".format(
-                            proximity,
-                            distance,
-                            normalization,
-                            q_0,
-                            omega)
-                        
-                        dict2plot[base_name] = np.array(distances_list)
-                        print("Saving ... {}".format(base_name))
-                        file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}/{base_name}.npy")
-                        np.save(file_name, np.array(distances_list))
+logging.basicConfig(
+    filename=f"stuff/logs/{args.exp_name}_{date}.log",
+    filemode='a',
+    format='%(asctime)s | line: %(lineno)d | %(levelname)s: %(message)s', level=logging.NOTSET)
 
-    file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}.npz")
-    np.savez(file_name, **dict2plot)      
+# File with the experiments specifications
+SEED = 10000
+EXPERIMENT_FILE = args.exp_file
+TOTAL_ITER = 100
+ITER_SHOW = 25
 
-def testing_greedy(g_size, n_random_walks):
-    type_rw = "greedy"
+# Init to a particular seed
+np.random.seed(SEED)
 
-    advantage_options = [2,2.5,3]
-    q_0_options = [0, 0.3, 0.5, 0.7, 0.9]
-    num_rand_walks = int(n_random_walks)
+# Opening xlsx file with the parameters specifications
+params = pd.read_excel(EXPERIMENT_FILE, sheet_name=args.exp_name)
+
+# Create a dir where I save the results
+saving_dir = "stuff/results/aco_pp/histories_{}/".format(args.exp_name)     
+if not os.path.exists(saving_dir):         
+    os.makedirs(saving_dir)
+
+
+logging.info("Running experiment: {}".format(args.exp_name))
+logging.info("\n {}".format(params.head()))
+
+if args.exp_start is not None and args.exp_end is not None:
+    params = params.loc[(params.index >= args.exp_start) & (params.index < args.exp_end)]
+
+for index, row in params.iterrows():
+    exp_info = "\n ------------------------------- \n"
+    exp_info += f"| Running sub experiment: {index} \n"
+    exp_info += f'| type: {row["type"]} \n'
+    exp_info += f'| n_rw: {row["n_rw"]} \n'
+    exp_info += f'| size: {row["size"]} \n'
+    exp_info += f'| q_0: {row["q_0"]} \n'
+    exp_info += "-------------------------------"
+    logging.info(exp_info)
 
     # Create the graph
-    graph = ge.PPGraph(size=g_size, tau_0=0.1)
+    graph = ge.PPGraph(size=row["size"], tau_0=0.1)
 
-    dir_results = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}")
-    if not os.path.exists(dir_results):
-        os.makedirs(dir_results)
+    # Create the walker
+    if row["type"] == "greedy":
+        walker = rw.GreedyWalker(graph, 
+                            q_0 = row["q_0"], 
+                            advantage = row["advantage"])
+    elif row["type"] == "levy_greedy":
+        walker = rw.LevyFlightGreedyWalker(graph, 
+                                            q_0 = row["q_0"],
+                                            omega = row["omega"],
+                                            advantage = row["advantage"])
+    elif row["type"] == "proximity":
+        walker = rw.ProximityWalker(graph, 
+                                q_0 = row["q_0"], 
+                                proximity_mode = row["proximity"])
 
-    dict2plot = {}
+    elif row["type"] == "levy_proximity":
+        walker = rw.LevyFlightProximityWalker(graph, 
+                                q_0 = row["q_0"], 
+                                omega = row["omega"],
+                                proximity_mode = row["proximity"])
+    else:
+        logging.exception(f'The type {row["type"]} is not defined')
 
-    for advantage in advantage_options:
-        for q_0 in q_0_options:
-
-
-            # Create the walker
-            walker = rw.GreedyWalker(graph, 
-                                q_0 = q_0, 
-                                advantage = advantage)
-            
-            # Perform the walk
-            distances_list = walker.walk(num_rand_walks)
-            
-            base_name = "advantage_{}_q0_{}".format(
-                advantage,
-                q_0)
-            
-            dict2plot[base_name] = np.array(distances_list)
-            print("Saving ... {}.npy".format(base_name))
-            file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}/{base_name}.npy")
-            np.save(file_name, np.array(distances_list))
-
-    file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}.npz")
-    np.savez(file_name, **dict2plot) 
-
-def testing_proximity(g_size, n_random_walks):
-    type_rw = "proximity"
-    proximities_options = ['proximity_1', 'proximity_2']
-    distances_options = ['euclidean']
-    normalization_options = [ 'none']
-    q_0_options = [0. , 0.3, 0.5, 0.7, 0.9]
-
-    num_rand_walks = int(n_random_walks)
-
-    # Create the graph
-    graph = ge.PPGraph(size = g_size, tau_0 = 0.1)
-
-    dir_results = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}")
-    if not os.path.exists(dir_results):
-        os.makedirs(dir_results)
-
-    dict2plot = {}
-    for proximity in proximities_options:
-        for distance in distances_options:
-            for normalization in normalization_options:
-                for q_0 in q_0_options:
+    # Perform the walk
+    distances_list = walker.walk(row['n_rw'])
 
 
-                    # Create the walker
-                    walker = rw.ProximityWalker(graph, 
-                                            q_0 = q_0, 
-                                            reward_tau = 0.0001,
-                                            proximity_mode = proximity,
-                                            distance_type = distance,
-                                            normalization = normalization)
+    file_name = "history_exp_{}.npy".format(
+        str(index).zfill(2))
+    file_dir = os.path.join(saving_dir,file_name)
 
-                    # Perform the walk
-                    distances_list = walker.walk(num_rand_walks = num_rand_walks)
-                    
-                    base_name = "{}_{}_{}_{}".format(
-                        proximity,
-                        distance,
-                        normalization,
-                        q_0)
-                    
-                    dict2plot[base_name] = np.array(distances_list)
-                    print("Saving ... {}.npy".format(base_name))
+    history = {
+        "distances" : np.array(distances_list),
+        "mean"  : np.mean(distances_list),
+        "std"  : np.std(distances_list),
+        "sem"  : np.std(distances_list, ddof=1) / np.sqrt(np.size(distances_list))
+    }
 
-                    file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}/{base_name}.npy")
-                    np.save(file_name, np.array(distances_list))
 
-    file_name = os.path.join(RANDOM_WALK_DIR,f"rw_{type_rw}_size_{graph.size}.npz")
-    np.savez(file_name, **dict2plot)      
-
-# n_randwalk_options = [1e5, 1e5, 1e5, 1e5,  1e5, 1e4, 3500, 3500, 25]
-# graph_size_options = [ 10,  25,  50,  75,  100, 512, 1024, 2048, 4096] 
-
-n_randwalk_options = [ 1e5, 1e5, 1e5,  1e5, 1e4, 3500, 3500, 25]
-graph_size_options = [ 25, 50,  75,  100, 512, 1024, 2048, 4096] 
-
-#testing_proximity(10, 10)
-for idx, graph_size in enumerate(graph_size_options):
-    #testing_proximity(graph_size, n_randwalk_options[idx])
-    #testing_greedy(graph_size, n_randwalk_options[idx])
-    testing_levy_proximity(graph_size, n_randwalk_options[idx])
-    #testing_levy_greedy(graph_size, n_randwalk_options[idx])
+    np.save(file_dir, history)

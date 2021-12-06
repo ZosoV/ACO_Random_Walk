@@ -91,3 +91,29 @@ class PPGraph(nx.Graph):
     color_values = [ self.nodes[i]['state'].value for i in self.nodes() ]
     nx.draw(self, pos, cmap = plt.get_cmap('viridis'), node_color=color_values\
             , node_size=node_size, with_labels=with_labels, vmin = 0., vmax = 1.0)
+
+  def get_pheromones_matrix(self):
+    # get the number of pheromones per node
+    pheromones = []
+    for i in sorted(self.nodes()):
+        if self.nodes[i]['state'] != State.wall:
+            neighbors = self[i]
+            accu_pheromone = 0
+            counter = 0
+            for neighbor_node, edge in neighbors.items():
+                if self.nodes[i]['state'] != State.wall:
+                    accu_pheromone += edge['pheromone']
+                    counter += 1
+                
+            pheromones.append(accu_pheromone/counter)
+        else:
+            pheromones.append(0)
+            
+    return np.array(pheromones).reshape((self.size, self.size))
+
+  def get_exploration_matrix(self):
+    # get the number of times that the ants visits per node.
+    exploration = [ self.nodes[i]['counter'] for i in sorted(self.nodes()) ]
+    exploration = np.array(exploration).reshape((self.size, self.size))
+    
+    return exploration
