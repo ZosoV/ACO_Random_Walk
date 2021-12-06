@@ -19,11 +19,11 @@ NOTE: This repository is an extended and updated version of the work [PathPlanni
 
 * **Notebooks**. The notebooks are designed so that almost all requirements are contained; or in other words, it is not necessary to export additional libraries. Therefore, if you want to understand the code, we suggest to start with these notebooks.
     * [notebooks/aco_pp.ipynb](./notebooks/aco_pp.ipynb) encloses the main ACO algorithm for solving path planning problem. Some dilemmas and additional strategies like `proximity` and `penalty` are explained here.
-    * [notebooks/aco_tsp.ipynb](./notebooks/aco_tsp.ipynb) encloses an additional algorithm for solving the Travelling Salesman Problem with an ACO algorithm
     * [notebooks/random_walks.ipynb](./notebooks/random_walks.ipynb) encloses the main algorithms proposed to perform the random walks.
+    * [notebooks/proximities_testing.ipynb](notebooks/proximities_testing.ipynb) encloses a small test where we checked the proximity measurements and how the different normalization techniques could change the proximity distribution.
 
     Additional Notebooks.
-    * [notebooks/proximities_testing.ipynb](notebooks/proximities_testing.ipynb) encloses a small test where we checked the proximity measurements and how the different normalization techniques could change the proximity distribution.
+    * [notebooks/aco_tsp.ipynb](./notebooks/aco_tsp.ipynb) encloses an additional algorithm for solving the Travelling Salesman Problem with an ACO algorithm
     * [notebooks/random_maze.ipynb](./notebooks/random_maze.ipynb) encloses an algorithm to create random mazes in a graph environment.
 
 
