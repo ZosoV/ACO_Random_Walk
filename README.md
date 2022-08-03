@@ -1,4 +1,4 @@
-# ACO_Random_Walk (Work in Progress)
+# ACO_Random_Walk
 
 This research work proposes a promising method to initialize pheromones in an Ant Colony Optimization (ACO) algorithm through random walks. Further, this research aims to lay the foundations for future research in the area, especially to find efficient ways to generate prior knowledge for ACO algorithms.
 
