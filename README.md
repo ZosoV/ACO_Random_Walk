@@ -1,5 +1,7 @@
 # ACO_Random_Walk
 
+**Project page:** [zosov.github.io/portfolio/aco_path_planning/](https://zosov.github.io/portfolio/aco_path_planning/)
+
 This research work proposes a promising method to initialize pheromones in an Ant Colony Optimization (ACO) algorithm through random walks. Further, this research aims to lay the foundations for future research in the area, especially to find efficient ways to generate prior knowledge for ACO algorithms.
 
 NOTE: This repository is an extended and updated version of the work [PathPlanningACO](https://github.com/ZosoV/PathPlanningACO).
